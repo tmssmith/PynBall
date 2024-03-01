@@ -1,5 +1,5 @@
-from pynball import Point
-import math
+from . import Point
+from .utils import clip
 
 DRAG = 0.995
 
@@ -23,7 +23,7 @@ class Ball:
         self.x += self.xdot * self.radius / 20.0
         self.y += self.ydot * self.radius / 20.0
 
-    def addDrag(self) -> None:
+    def add_drag(self) -> None:
         """Applies drag to the ball."""
         self.xdot *= DRAG
         self.ydot *= DRAG
@@ -79,22 +79,3 @@ class Ball:
             Point: A point corresponding to the center of the ball.
         """
         return Point(self.x, self.y)
-
-
-def clip(value: float, low: float, high: float) -> float:
-    """A helper function to clip a variable.
-
-    Args:
-        value (float): variable to clip.
-        low (float): lower bound.
-        high (float): upper bound.
-
-    Returns:
-        float: Clipped value.
-    """
-    if value >= high:
-        return high
-    elif value <= low:
-        return low
-    else:
-        return value

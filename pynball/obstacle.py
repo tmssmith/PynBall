@@ -6,8 +6,8 @@ class Obstacle(ABC):
     """An interface for obstacles."""
 
     @abstractmethod
-    def collision_effect(ball: Ball) -> list[float]:
-        """Returns the change in velocity of the ball after a collision with the obstacle.
+    def collision_effect(self, ball: Ball) -> list[float]:
+        """Returns the new velocity of the ball after a collision with the obstacle.
 
         Args:
             ball (Ball): The ball.
@@ -18,7 +18,7 @@ class Obstacle(ABC):
         pass
 
     @abstractmethod
-    def collision(ball: Ball) -> bool:
+    def collision(self, ball: Ball) -> bool:
         """Determine whether a collision with the ball has occured.
 
         Args:
@@ -30,7 +30,7 @@ class Obstacle(ABC):
         pass
 
     @abstractmethod
-    def get_intercept() -> Point:
+    def get_intercept(self) -> Point:
         """Get the intercept posiiton of the ball with the obstacle.
 
         Returns:
@@ -39,7 +39,7 @@ class Obstacle(ABC):
         pass
 
     @abstractmethod
-    def inside(point: Point) -> bool:
+    def inside(self, point: Point) -> bool:
         """Determine whether a point is inside the obstacle.
 
         Args:
