@@ -15,7 +15,6 @@ class Obstacle(ABC):
         Returns:
             list[float]: Change in the ball's X and Y velocities.
         """
-        pass
 
     @abstractmethod
     def collision(self, ball: Ball) -> bool:
@@ -27,16 +26,6 @@ class Obstacle(ABC):
         Returns:
             bool: True if a collision occured, False otherwise.
         """
-        pass
-
-    @abstractmethod
-    def get_intercept(self) -> Point:
-        """Get the intercept posiiton of the ball with the obstacle.
-
-        Returns:
-            Point: The point of collision.
-        """
-        pass
 
     @abstractmethod
     def inside(self, point: Point) -> bool:
@@ -48,4 +37,3 @@ class Obstacle(ABC):
         Returns:
             bool: True if the point is inside the obstacle, False otherwise.
         """
-        pass

@@ -2,12 +2,14 @@
 name = "pynball"
 version = "0.1.0"
 description = ""
-authors = ["Tom <tmssmith@gmail.com>"]
+authors = ["Tom Smith <tmssmith@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
 
+[tool.poetry.group.test.dependencies]
+pytest = "^8.0.2"
 
 [build-system]
 requires = ["poetry-core"]

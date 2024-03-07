@@ -28,7 +28,7 @@ class Ball:
         self.xdot *= DRAG
         self.ydot *= DRAG
 
-    def get_velocity(self) -> float:
+    def get_speed(self) -> float:
         """Returns the ball's speed.
 
         Returns:

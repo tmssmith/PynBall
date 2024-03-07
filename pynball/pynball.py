@@ -1,7 +1,6 @@
-from . import Ball, PolygonObstacle, Target, Point
-from enum import Enum
 import random
 from pathlib import Path
+from . import Ball, PolygonObstacle, Target, Point
 
 ACTION_DICT = {
     0: (1.0, 0.0),
@@ -47,7 +46,7 @@ class PynBall:
         else:
             raise NotImplementedError()
         start_point = random.choice(self.start_points)
-        return Ball(start_point, 0.1)
+        return Ball(start_point, radius)
 
     def get_target(self, target_config=None) -> Target:
         if target_config is None:
@@ -70,10 +69,10 @@ class PynBall:
             p11 = Point(0.99, 1.0)
             p12 = Point(1.0, 1.0)
             obstacles = [
-                PolygonObstacle(p1, p2, p4, p6),
-                PolygonObstacle(p1, p3, p5, p7),
-                PolygonObstacle(p7, p8, p10, p2),
-                PolygonObstacle(p12, p11, p9, p6),
+                PolygonObstacle([p1, p2, p4, p6]),
+                PolygonObstacle([p1, p3, p5, p7]),
+                PolygonObstacle([p7, p8, p10, p2]),
+                PolygonObstacle([p12, p11, p9, p6]),
             ]
             return obstacles
         else:
@@ -106,8 +105,8 @@ class PynBall:
                     # xdot, ydot = obstacle.collision_effect(self.ball)
 
             if num_collisions == 1:
-                xdot, ydot = obstacle.collision_effect(self.ball)
-                self.ball.set_velocities(xdot, ydot)
+                new_vel = obstacle.collision_effect(self.ball)
+                self.ball.set_velocities(new_vel.x, new_vel.y)
                 if i == self.step_duration - 1:
                     # Add a bonus step to ensure ball bounces away from obstacle.
                     self.ball.step()

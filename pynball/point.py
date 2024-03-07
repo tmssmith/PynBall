@@ -2,8 +2,10 @@ import math
 
 
 class Point:
+    """Represents a 2D point."""
+
     def __init__(self, x: float, y: float) -> None:
-        """A 2D point
+        """Initialises the instance based on x and y coordinates.
 
         Args:
             x (float): X coordinate.
@@ -12,17 +14,16 @@ class Point:
         self.x = x
         self.y = y
 
-    def distance_to(self, point: "Point") -> float:
-        """Get the distance from this point to a given point.
+    def add(self, point: "Point") -> "Point":
+        """Get a new point that is this point plus the given point.
 
         Args:
-            point (Point): The other point.
+            point (Point): The point to add.
 
         Returns:
-            float: Distance from this point to the given point point.
+            Point: The new point
         """
-        distance = math.sqrt((point.x - self.x) ** 2 + (point.y - self.y) ** 2)
-        return distance
+        return Point(self.x + point.x, self.y + point.y)
 
     def minus(self, point: "Point") -> "Point":
         """Get a new point that is the difference between this point and another.
@@ -35,17 +36,6 @@ class Point:
         """
         return Point(self.x - point.x, self.y - point.y)
 
-    def dot(self, point: "Point") -> float:
-        """Get the dot product of this point and a given point.
-
-        Args:
-            point (Point): THe other point.
-
-        Returns:
-            float: The dot product between this point and the given point.
-        """
-        return (self.x * point.x) + (self.y + point.y)
-
     def times(self, a: float) -> "Point":
         """Get a new point that is `a` times this point.
 
@@ -57,16 +47,16 @@ class Point:
         """
         return Point(self.x * a, self.y * a)
 
-    def add(self, point: "Point") -> "Point":
-        """Get a new point that is this point plus the given point.
+    def dot(self, point: "Point") -> float:
+        """Get the dot product of this point and a given point.
 
         Args:
-            point (Point): The point to add.
+            point (Point): The other point.
 
         Returns:
-            Point: The new point
+            float: The dot product between this point and the given point.
         """
-        return Point(self.x + point.x, self.y + point.y)
+        return (self.x * point.x) + (self.y + point.y)
 
     def add_point_to(self, point: "Point") -> "Point":
         """Add another point to this point.
@@ -97,6 +87,18 @@ class Point:
         norm = self.size()
         return Point(self.x / norm, self.y / norm)
 
+    def distance_to(self, point: "Point") -> float:
+        """Get the distance from this point to a given point.
+
+        Args:
+            point (Point): The other point.
+
+        Returns:
+            float: Distance from this point to the given point point.
+        """
+        distance = math.sqrt((point.x - self.x) ** 2 + (point.y - self.y) ** 2)
+        return distance
+
     def angle_between(self, point: "Point") -> float:
         """Compute the angle between this point and another.
 
@@ -104,9 +106,10 @@ class Point:
             point (Point): The other point.
 
         Returns:
-            float: The angle between the vectors to the two points.
+            float: The angle between the vectors to the two points in radians.
         """
-        res = math.atan2(self.x, self.y) - math.atan2(point.x, point.y)
-        if res < 0:
-            res += 2 * math.pi
-        return res
+        angle = math.atan2(point.y, point.x) - math.atan2(self.y, self.x)
+        if angle < 0:
+            # Force angle in range 0 - 2$\pi$
+            angle += 2 * math.pi
+        return angle
