@@ -1,3 +1,5 @@
+# pylint: disable=missing-function-docstring
+
 import math
 import pytest
 from pynball import Point, Ball
@@ -14,10 +16,10 @@ def test_ball(ball):
     assert isinstance(center, Point)
     assert center.x == 0.1 and center.y == 0.1
     assert ball.get_speed() == 0.0
-    ball.set_velocities(1.0, 0.0)
+    ball.set_velocity(Point(1.0, 0.0))
     assert ball.get_speed() == 1.0
     for _ in range(20):
-        ball.step()
+        ball.step(20)
     assert ball.xdot == 1.0
     target = 0.1 + 20 * 0.1 / 20
     assert math.isclose(ball.x, target)
@@ -25,15 +27,15 @@ def test_ball(ball):
 
 
 def test_set_position(ball):
-    ball.set_velocities(1.0, 0.5)
+    ball.set_velocity(Point(1.0, 0.5))
     ball.set_position(0.5, 0.5)
     assert ball.x == 0.5 and ball.y == 0.5
     assert ball.xdot == 0.0 and ball.ydot == 0.0
 
 
 def test_drag(ball):
-    ball.set_velocities(1.0, 0)
-    ball.add_drag()
+    ball.set_velocity(Point(1.0, 0))
+    ball.add_drag(0.995)
     assert ball.xdot == 0.995 and ball.ydot == 0.0
 
 

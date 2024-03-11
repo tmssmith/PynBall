@@ -1,6 +1,56 @@
 import math
 from typing import Optional
-from . import Ball, Obstacle, Point
+from pynball.ball import Ball
+from pynball.obstacle import Obstacle
+from pynball.point import Point
+from pynball.utils import clip_if_close
+
+
+def line_intersect(ball: Ball, edge: list[Point]) -> bool:
+    """Determines whether a ball and an edge intersect.
+
+    Represents the intersection point(s) of an infinite line and the
+    circumference of the ball as the roots of a quadratic equation.
+    Root is imaginary if the line and circumference do no intersect.
+    Intersection(s) are on the edge (i.e a finite section of the inifinite line)
+    if either root is between 0 and 1 (inclusive).
+
+    See [1] for algorithmic details. Implementation uses the
+    alternative quadratic formula [2].
+
+    [1] https://math.stackexchange.com/questions/311921/get-location-of-vector-circle-intersection
+    [2] https://math.stackexchange.com/questions/1340267/alternative-quadratic-formula
+
+    Args:
+        ball (Ball): The ball to test.
+        edge (list[Point]): The edge to test.
+
+    Returns:
+        bool: True if the ball and the line intersect, False otherwise.
+    """
+
+    p1, p2 = edge
+    assert p1.x != p2.x or p1.y != p2.y, f"Edge is undefined: vertices both equal {p1}."
+    a = (p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2
+    b = 2 * (p2.x - p1.x) * (p1.x - ball.x) + 2 * (p2.y - p1.y) * (p1.y - ball.y)
+    c = (p1.x - ball.x) ** 2 + (p1.y - ball.y) ** 2 - ball.radius**2
+    if math.isclose(c, 0.0, abs_tol=1e-12):
+        # If c = 0 then t = 0 is a root and so there is an intersection.
+        return True
+    discriminant = b**2 - 4 * a * c
+    if math.isclose(discriminant, 0, abs_tol=1e-12):
+        # Tangential intersection, only one intersection point.
+        t = clip_if_close((2 * c) / (-b))
+        # Intersection is on this edge if 0 < t < 1.
+        return 0 <= t <= 1
+    if discriminant < 0:
+        # No intersection
+        return False
+    # Two intersections, which only exist on edge if 0 < t < 1.
+    sqrt_discriminant = math.sqrt(discriminant)
+    t1 = (2 * c) / (-b + sqrt_discriminant)
+    t2 = (2 * c) / (-b - sqrt_discriminant)
+    return 0 <= clip_if_close(t1) <= 1 or 0 <= clip_if_close(t2) <= 1
 
 
 class PolygonObstacle(Obstacle):
@@ -22,7 +72,7 @@ class PolygonObstacle(Obstacle):
         self.edges = [
             [self.points[i], self.points[i - 1]] for i in range(len(self.points))
         ]
-        self.compute_bounds()
+        self.bounds = self.get_bounds()
         self.num_collisions: int = 0
         self.intersect_edge: list[Point] | None = None
 
@@ -33,47 +83,31 @@ class PolygonObstacle(Obstacle):
         self.intersect_edge = None
         self.num_collisions = 0
         for edge in self.edges:
-            if self.line_intersect(ball, edge):
+            if line_intersect(ball, edge):
                 self.intersect_edge = edge
                 self.num_collisions += 1
 
         return self.num_collisions >= 1
 
-    def line_intersect(self, ball: Ball, edge: list[Point]) -> bool:
-        # https://math.stackexchange.com/questions/311921/get-location-of-vector-circle-intersection
-        # https://mathworld.wolfram.com/QuadraticFormula.html
-        # https://math.stackexchange.com/questions/1340267/alternative-quadratic-formula
-
-        p1, p2 = edge
-        x0, y0 = p1.x, p1.y
-        x1, y1 = p2.x, p2.y
-        h, k = ball.x, ball.y
-        a = (x1 - x0) ** 2 + (y1 - y0) ** 2
-        b = 2 * (x1 - x0) * (x0 - h) + 2 * (y1, y0) * (y0 - k)
-        c = (x0 - h) ** 2 + (y0 - k) ** 2 - ball.radius**2
-        discriminant = b**2 - 4 * a * c
-        if discriminant < 0:
-            # No intersection
-            return False
-        if discriminant == 0:
-            # Tangential intersection, only one intersection point.
-            t = (2 * c) / (-b)
-            if not 0 < t < 1:
-                # Intersection falls outside of the limits of this edge.
-                return False
-        # Two intersections, which only exist on edge if 0 < t < 1.
-        sqrt_discriminant = math.sqrt(discriminant)
-        t1 = (2 * c) / (-b + sqrt_discriminant)
-        t2 = (2 * c) / (-b - sqrt_discriminant)
-        return 0 < t1 < 1 or 0 < t2 < 1
-
     def collision_effect(self, ball: Ball) -> Point:
-        if self.intersect_edge is None or self.num_collisions == 0:
-            # No collision detected. This function should never be
-            # called if no collisions have occured, but just in case...
+        """Returns the new velocity of the ball after a collision with the obstacle.
 
-            return Point(ball.xdot, ball.ydot)
-        if self.num_collisions >= 1:
+        Must be called after PolygonObstacle.collision
+        Uses the reflection vector of the ball velocity [1].
+
+        [1] https://math.stackexchange.com/questions/13261/how-to-get-a-reflection-vector
+
+        Args:
+            ball (Ball): The ball.
+
+        Returns:
+            Point: The new velocity.
+        """
+        assert (
+            self.intersect_edge is not None and self.num_collisions != 0.0
+        ), "No collisions detected, did you call .collision() first?"
+
+        if self.num_collisions > 1:
             # If there are multiple collisions, reverse velocity.
             return Point(-ball.xdot, -ball.ydot)
 
@@ -87,7 +121,9 @@ class PolygonObstacle(Obstacle):
 
     def inside(self, point: Point) -> bool:
         """Determines whether a point lies inside the polygon.
+
         See https://stackoverflow.com/a/23223947 for explanation.
+        Currently unused, should probably remove.
 
         Args:
             point (Point): Point to test
@@ -104,15 +140,14 @@ class PolygonObstacle(Obstacle):
 
         for edge in self.edges:
             v1, v2 = edge
-            if (
-                v1.y > point.y != v2.y > point.y
-                and point.x < (v2.x - v1.x) * (point.y - v1.y) / (v2.y - v1.y) + v1.x
-            ):
+            if (v1.y > point.y) != (v2.y > point.y) and point.x < (v2.x - v1.x) * (
+                point.y - v1.y
+            ) / (v2.y - v1.y) + v1.x:
                 inside = not inside
 
         return inside
 
-    def compute_bounds(self) -> None:
+    def get_bounds(self) -> list[float]:
         """Precomputes a bounding box of the polygon for faster
         collision detection
         """
@@ -126,7 +161,8 @@ class PolygonObstacle(Obstacle):
             min_y = min(min_y, point.y)
             max_x = max(max_x, point.x)
             max_y = max(max_y, point.y)
-        self.bounds = [min_x, min_y, max_x, max_y]
+
+        return [min_x, min_y, max_x, max_y]
 
     def outside_bounds(self, point: Point, radius: Optional[float] = 0.0) -> bool:
         """Determines whether a point, or optionally a circle centered
@@ -143,8 +179,8 @@ class PolygonObstacle(Obstacle):
         """
         min_x, min_y, max_x, max_y = self.bounds
         return (
-            point.x - radius > max_x
-            or point.y - radius > max_y
-            or point.x + radius < min_x
+            point.x + radius < min_x
             or point.y + radius < min_y
+            or point.x - radius > max_x
+            or point.y - radius > max_y
         )

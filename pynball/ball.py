@@ -1,10 +1,18 @@
-from . import Point
-from .utils import clip
-
-DRAG = 0.995
+from pynball.point import Point
+from pynball.utils import clip
 
 
 class Ball:
+    """A ball in the pinball domain.
+
+    Attribute:
+        x (float): X coordinate of the ball
+        y (float): Y coordinate of the ball
+        xdot (float): X velocity of the ball
+        ydot (float): Y velocity of the ball
+        radius (float): Ball radius
+    """
+
     def __init__(self, p: Point, radius: float) -> None:
         """Constructs a new ball given a point and radius. Velocities are set to zero.
 
@@ -18,15 +26,15 @@ class Ball:
         self.ydot = 0.0
         self.radius = radius
 
-    def step(self) -> None:
-        """Moves the ball one step forward."""
-        self.x += self.xdot * self.radius / 20.0
-        self.y += self.ydot * self.radius / 20.0
+    def step(self, step_duration) -> None:
+        """Moves the ball one inner-step forward."""
+        self.x += self.xdot * self.radius / step_duration
+        self.y += self.ydot * self.radius / step_duration
 
-    def add_drag(self) -> None:
+    def add_drag(self, drag: float) -> None:
         """Applies drag to the ball."""
-        self.xdot *= DRAG
-        self.ydot *= DRAG
+        self.xdot *= drag
+        self.ydot *= drag
 
     def get_speed(self) -> float:
         """Returns the ball's speed.
@@ -50,15 +58,14 @@ class Ball:
         self.xdot = clip(self.xdot, -1.0, 1.0)
         self.ydot = clip(self.ydot, -1.0, 1.0)
 
-    def set_velocities(self, xdot: float, ydot: float) -> None:
+    def set_velocity(self, velocity: Point) -> None:
         """Set the velocity of the ball.
 
         Args:
-            xdot (float): X velocity to set.
-            ydot (float): Y velocity to set.
+            velocity (Point): Point vector of velocity to set.
         """
-        self.xdot = xdot
-        self.ydot = ydot
+        self.xdot = velocity.x
+        self.ydot = velocity.y
 
     def set_position(self, x: float, y: float) -> None:
         """Set the position of the ball. Sets velocity to zero.

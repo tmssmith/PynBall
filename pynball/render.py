@@ -1,0 +1,26 @@
+from pynball.pynball_env import PynBall
+from pynball import Point
+
+if __name__ == "__main__":
+    env = PynBall("config.toml")
+    env.reset()
+    env.ball.set_velocity(Point(0.5, 0))
+    env.render()
+    env.step(0)
+    env.render()
+    env.step(0)
+    env.render()
+    env.step(0)
+    env.render()
+    env.step(0)
+    env.render()
+    env.step(0)
+    env.render()
+    env.step(0)
+    env.render()
+    env.step(0)
+    env.render()
+    env.step(0)
+    env.render()
+    env.step(0)
+    env.render()

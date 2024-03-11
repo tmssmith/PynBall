@@ -1,15 +1,23 @@
 [tool.poetry]
 name = "pynball"
-version = "0.1.0"
-description = ""
+version = "0.2.0"
+description = "A python implementation of the classic reinforcement learning domain PinBall."
+license = "MIT"
 authors = ["Tom Smith <tmssmith@gmail.com>"]
 readme = "README.md"
+repository = "https://github.com/tmssmith/PynBall"
+exclude = ["pynball/tests/*"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+matplotlib = "^3.8.3"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.0.2"
+
+[tool.pylint]
+disable="C0114"
+max-line-length="88"
 
 [build-system]
 requires = ["poetry-core"]

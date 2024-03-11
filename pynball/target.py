@@ -1,4 +1,6 @@
-from . import Ball, Obstacle, Point
+from pynball.obstacle import Obstacle
+from pynball.ball import Ball
+from pynball.point import Point
 
 
 class Target(Obstacle):
@@ -22,16 +24,16 @@ class Target(Obstacle):
         """
         return self.point
 
-    def collision_effect(self, ball: Ball) -> list[float]:
+    def collision_effect(self, ball: Ball) -> Point:
         """Returns the change in velocity of the ball after a collision with the target.
 
         Args:
             ball (Ball): The ball.
 
         Returns:
-            list[float]: [0.0, 0.0] as the target is absorbing.
+            Point: [0.0, 0.0] as the target is absorbing.
         """
-        return [0.0, 0.0]
+        return Point(0.0, 0.0)
 
     def collision(self, ball: Ball) -> bool:
         """Determine whether a collision with the ball has occurred.

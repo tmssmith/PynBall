@@ -1,3 +1,5 @@
+# pylint: disable=missing-function-docstring
+
 import pytest
 from pynball.utils import clip
 

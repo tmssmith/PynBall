@@ -56,7 +56,7 @@ class Point:
         Returns:
             float: The dot product between this point and the given point.
         """
-        return (self.x * point.x) + (self.y + point.y)
+        return (self.x * point.x) + (self.y * point.y)
 
     def add_point_to(self, point: "Point") -> "Point":
         """Add another point to this point.

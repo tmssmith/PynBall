@@ -1,3 +1,5 @@
+# pylint: disable=missing-function-docstring
+
 import math
 import pytest
 from pynball import Point
@@ -57,7 +59,7 @@ def test_minus(first_point, second_point, third_point):
     assert p3.y == 0
 
 
-def test_times(first_point, second_point, third_point):
+def test_times(first_point):
     multipliers = [0, 5, -1, 5.2, -7 / 11]
     for multiplier in multipliers:
         res1 = first_point.times(multiplier)

@@ -1,19 +1,20 @@
 from abc import ABC, abstractmethod
-from pynball import Ball, Point
+from pynball.ball import Ball
+from pynball.point import Point
 
 
 class Obstacle(ABC):
     """An interface for obstacles."""
 
     @abstractmethod
-    def collision_effect(self, ball: Ball) -> list[float]:
+    def collision_effect(self, ball: Ball) -> Point:
         """Returns the new velocity of the ball after a collision with the obstacle.
 
         Args:
             ball (Ball): The ball.
 
         Returns:
-            list[float]: Change in the ball's X and Y velocities.
+            Point:  The new velocity.
         """
 
     @abstractmethod

@@ -1,5 +1,7 @@
-from pynball import Target, Point, Ball
+# pylint: disable=missing-function-docstring
+
 import pytest
+from pynball import Target, Point, Ball
 
 
 @pytest.fixture(name="target")
