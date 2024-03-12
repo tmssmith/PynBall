@@ -94,3 +94,14 @@ def test_distance(first_point, second_point, third_point):
     assert first_point.distance_to(third_point) == 1.0
     assert third_point.distance_to(first_point) == 1.0
     assert second_point.distance_to(third_point) == math.sqrt(5)
+
+
+def test_parallel():
+    p1 = Point(0.0, 0.1)
+    p2 = Point(0.0, 1.0)
+    p3 = Point(0.0, -2.0)
+    p4 = Point(1.0, 0.1)
+    assert p1.is_parallel_to(p2) is True
+    assert p2.is_parallel_to(p1) is True
+    assert p2.is_parallel_to(p3) is True
+    assert p1.is_parallel_to(p4) is False

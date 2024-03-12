@@ -138,6 +138,15 @@ def test_square_collision(square_obstacle):
     assert square_obstacle.collision(ball_8) is True
 
 
+def test_any_parallel(square_obstacle):
+    e1 = [Point(0, 0), Point(1, 0)]
+    e2 = [Point(-1, 1), Point(5, 1)]
+    e3 = [Point(0, 3), Point(1, 4)]
+    assert square_obstacle.any_parallel(e1, [e2]) is True
+    assert square_obstacle.any_parallel(e1, [e3]) is False
+    assert square_obstacle.any_parallel(e1, [e2, e3]) is True
+
+
 def test_square_collision_effect_1(square_obstacle):
     """Test a direct rightwards collision."""
     ball = Ball(Point(0.3, 0.5), 0.1)

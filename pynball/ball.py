@@ -86,3 +86,6 @@ class Ball:
             Point: A point corresponding to the center of the ball.
         """
         return Point(self.x, self.y)
+
+    def __str__(self):
+        return f"{str(self.get_center())}, {self.xdot}, {self.ydot}"

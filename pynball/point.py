@@ -2,7 +2,12 @@ import math
 
 
 class Point:
-    """Represents a 2D point."""
+    """Represents a 2D point.
+
+    Attributes:
+        x (float): X coordinate
+        y (float): Y coordinate
+    """
 
     def __init__(self, x: float, y: float) -> None:
         """Initialises the instance based on x and y coordinates.
@@ -99,6 +104,17 @@ class Point:
         distance = math.sqrt((point.x - self.x) ** 2 + (point.y - self.y) ** 2)
         return distance
 
+    def is_parallel_to(self, point: "Point") -> bool:
+        """Checks if the vector of this point is parallel to input point.
+
+        Args:
+            point (Point): The other point.
+
+        Returns:
+            bool: True if parallel, False otherwise.
+        """
+        return self.x * point.y == self.y * point.x
+
     def angle_between(self, point: "Point") -> float:
         """Compute the angle between this point and another.
 
@@ -113,3 +129,6 @@ class Point:
             # Force angle in range 0 - 2$\pi$
             angle += 2 * math.pi
         return angle
+
+    def __str__(self):
+        return f"{self.x}, {self.y}"

@@ -63,7 +63,7 @@ class PolygonObstacle(Obstacle):
         this polygon, each edge represented as point pairs.
         num_collisions (int): Counts the number of collisions between
         the obstacle and a ball.
-        intersect_edge (list[Point]): The edge that a ball collided with,
+        intersect_edges (list[Point]): The edge that a ball collided with,
         represented as a pair of points.
     """
 
@@ -74,20 +74,39 @@ class PolygonObstacle(Obstacle):
         ]
         self.bounds = self.get_bounds()
         self.num_collisions: int = 0
-        self.intersect_edge: list[Point] | None = None
+        self.intersect_edges: list[list[Point]] = []
 
     def collision(self, ball: Ball) -> bool:
         if self.outside_bounds(ball.get_center(), ball.radius):
             return False
 
-        self.intersect_edge = None
+        self.intersect_edges = []
         self.num_collisions = 0
         for edge in self.edges:
             if line_intersect(ball, edge):
-                self.intersect_edge = edge
-                self.num_collisions += 1
+                if not self.intersect_edges:
+                    self.intersect_edges.append(edge)
+                    self.num_collisions += 1
+                elif not self.any_parallel(edge, self.intersect_edges):
+                    self.intersect_edges.append(edge)
+                    self.num_collisions += 1
 
         return self.num_collisions >= 1
+
+    def any_parallel(self, edge: list[Point], edges: list[list[Point]]) -> bool:
+        """Checks if an edge is parallel to any of the input edges.
+
+        Args:
+            edge (list[Point]): Edge to check.
+            edges (list[list[Point]]): List of edges to compare against.
+
+        Returns:
+            bool: True if none of the edges are parallel, False otherwise.
+        """
+        for test in edges:
+            if test[1].minus(test[0]).is_parallel_to(edge[1].minus(edge[0])):
+                return True
+        return False
 
     def collision_effect(self, ball: Ball) -> Point:
         """Returns the new velocity of the ball after a collision with the obstacle.
@@ -104,7 +123,7 @@ class PolygonObstacle(Obstacle):
             Point: The new velocity.
         """
         assert (
-            self.intersect_edge is not None and self.num_collisions != 0.0
+            self.num_collisions != 0.0
         ), "No collisions detected, did you call .collision() first?"
 
         if self.num_collisions > 1:
@@ -112,7 +131,8 @@ class PolygonObstacle(Obstacle):
             return Point(-ball.xdot, -ball.ydot)
 
         ball_v1 = Point(ball.xdot, ball.ydot)
-        e = self.intersect_edge[1].minus(self.intersect_edge[0])
+        intersect_edge = self.intersect_edges[0]
+        e = intersect_edge[1].minus(intersect_edge[0])
         # Get unit vector normal to intersecting edge
         n = Point(e.y, -e.x).normalise()
         # vector reflection

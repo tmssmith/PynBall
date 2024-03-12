@@ -47,19 +47,19 @@ def test_step(env):
 
 def test_bounds(env):
     env.reset()
-    env.check_bounds()
+    env._check_bounds()
     env.ball.set_position(1.1, -0.1)
     with pytest.raises(RuntimeError):
-        env.check_bounds()
+        env._check_bounds()
     env.ball.set_position(1.1, 0.1)
     with pytest.raises(RuntimeError):
-        env.check_bounds()
+        env._check_bounds()
     env.ball.set_position(0.1, -2.1)
     with pytest.raises(RuntimeError):
-        env.check_bounds()
+        env._check_bounds()
     env.ball.set_position(-0.1, -0.1)
     with pytest.raises(RuntimeError):
-        env.check_bounds()
+        env._check_bounds()
     env.ball.set_position(-0.1, 0.21)
     with pytest.raises(RuntimeError):
-        env.check_bounds()
+        env._check_bounds()

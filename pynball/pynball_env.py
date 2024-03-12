@@ -11,18 +11,7 @@ from pynball.point import Point
 from pynball.ball import Ball
 from pynball.polygon_obstacle import PolygonObstacle
 from pynball.target import Target
-
-ACTION_DICT = {
-    0: (1.0, 0.0),
-    1: (0.0, 1.0),
-    2: (-1.0, 0.0),
-    3: (0.0, -1.0),
-    4: (0.0, 0.0),
-}
-# ACC_X, ACC_Y, DEC_X, DEC_Y, NOP
-
-THRUST_PENALTY = -5.0
-NOP_PENALTY = -1.0
+from pynball.utils import clip_if_close
 
 
 class PynBall:
@@ -37,6 +26,18 @@ class PynBall:
         ball (Ball): The ball that travels in the environment.
         reset_flag (bool): Tracks whether the environment has been reset.
     """
+
+    ACTION_DICT = {
+        0: (1.0, 0.0),
+        1: (0.0, 1.0),
+        2: (-1.0, 0.0),
+        3: (0.0, -1.0),
+        4: (0.0, 0.0),
+    }
+    # ACC_X, ACC_Y, DEC_X, DEC_Y, NOOP
+
+    THRUST_PENALTY = -5.0
+    NOP_PENALTY = -1.0
 
     def __init__(
         self,
@@ -112,8 +113,8 @@ class PynBall:
             tuple: (state, reward, terminal, info)
         """
         assert self.reset_flag is True, "Environment requires resetting."
-        x_impulse, y_impulse = ACTION_DICT[action]
-        reward = NOP_PENALTY if action == 4 else THRUST_PENALTY
+        x_impulse, y_impulse = self.ACTION_DICT[action]
+        reward = self.NOP_PENALTY if action == 4 else self.THRUST_PENALTY
         terminal = False
         self.ball.add_impulse(x_impulse, y_impulse)
         for i in range(self.step_duration):
@@ -131,7 +132,7 @@ class PynBall:
                 self.ball.set_velocity(new_vel)
                 if i == self.step_duration - 1:
                     # Add a bonus step to ensure ball bounces away from obstacle.
-                    self.ball.step()
+                    self.ball.step(self.step_duration)
             elif num_collisions > 1:
                 # If there are multiple collisions, reverse velocity.
                 new_vel = Point(-self.ball.xdot, -self.ball.ydot)
@@ -143,21 +144,27 @@ class PynBall:
                 break
 
         self.ball.add_drag(self.drag)
-        self.check_bounds()
+        self._check_bounds()
         current_state = (self.ball.x, self.ball.y, self.ball.xdot, self.ball.ydot)
         return current_state, reward, terminal, None
 
-    def check_bounds(self) -> None:
+    def _check_bounds(self) -> None:
         """Checks that the ball is within the bounds of the game area.
 
         Raises:
             RuntimeError: Ball out of bounds error.
         """
-        point = self.ball.get_center()
-        if not (0.0 < point.x < 1.0 and 0.0 < point.y < 1.0):
-            raise RuntimeError("Ball out of bounds")
+        if not (0.0 < self.ball.x < 1.0 and 0.0 < self.ball.y < 1.0):
+            self.ball.x = clip_if_close(self.ball.x)
+            self.ball.y = clip_if_close(self.ball.y)
+        if not (0.0 < self.ball.x < 1.0 and 0.0 < self.ball.y < 1.0):
+            raise RuntimeError(
+                "Ball out of bounds\n",
+                f"x: {self.ball.x}\ny: {self.ball.y}\n",
+                f"vel_x: {self.ball.xdot}\nvel_y: {self.ball.ydot}",
+            )
 
-    def render(self):
+    def render(self) -> plt.Figure:
         """Renders the current state of an environment.
 
         Args:
@@ -174,20 +181,19 @@ class PynBall:
                 facecolor="r",
             )
         )
-        ax.add_patch(
-            Circle([self.ball.x, self.ball.y], self.ball.radius, facecolor="b")
-        )
         r = self.ball.radius
-        ax.arrow(
-            self.ball.x,
-            self.ball.y,
-            self.ball.xdot * 2 * r,
-            self.ball.ydot * 2 * r,
-            head_width=0.03,
-            head_length=0.03,
-            facecolor="g",
-            edgecolor="g",
-        )
+        ax.add_patch(Circle([self.ball.x, self.ball.y], r, facecolor="b"))
+        if self.ball.get_speed() != 0.0:
+            ax.arrow(
+                self.ball.x,
+                self.ball.y,
+                self.ball.xdot * 2 * r,
+                self.ball.ydot * 2 * r,
+                head_width=0.03,
+                head_length=0.03,
+                facecolor="g",
+                edgecolor="g",
+            )
+        ax.axis("equal")
+        plt.gca().invert_yaxis()
         plt.show()
-        # plt.draw()
-        # plt.pause(0.1)
