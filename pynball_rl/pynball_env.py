@@ -7,10 +7,10 @@ except ModuleNotFoundError:
     import tomli as tomllib
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon, Circle
-from pynball.point import Point
-from pynball.ball import Ball
-from pynball.polygon_obstacle import PolygonObstacle
-from pynball.target import Target
+from pynball_rl.point import Point
+from pynball_rl.ball import Ball
+from pynball_rl.polygon_obstacle import PolygonObstacle
+from pynball_rl.target import Target
 
 
 class PynBall:

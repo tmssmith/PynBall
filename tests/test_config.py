@@ -7,9 +7,9 @@ try:
     import tomllib
 except ModuleNotFoundError:
     import tomli as tomllib
-from pynball import PolygonObstacle, Point, Ball, Target
+from pynball_rl import PolygonObstacle, Point, Ball, Target
 
-CONFIG_PATH = "config.toml"
+CONFIG_PATH = "pynball_rl/configs/easy_config.toml"
 
 
 def test_config(config_path=CONFIG_PATH):

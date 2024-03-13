@@ -1,7 +1,7 @@
 # pylint: disable=missing-function-docstring
 
 import pytest
-from pynball.utils import clip
+from pynball_rl.utils import clip
 
 TEST_VALUES = [-100, -1.5, 0, 1.5, 50, 1e3, 5 / 83]
 TEST_BOUNDS = [[0, 1], [-1, 1], [-100, -50], [0, 1e-3], [1, 5]]

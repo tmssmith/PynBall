@@ -2,9 +2,9 @@ try:
     import pygame
 except ImportError as e:
     print(f"Pygame not available: {e}")
-from pynball.pynball_env import PynBall
-from pynball.point import Point
-from pynball.ball import Ball
+from pynball_rl.pynball_env import PynBall
+from pynball_rl.point import Point
+from pynball_rl.ball import Ball
 
 
 class Viewer:

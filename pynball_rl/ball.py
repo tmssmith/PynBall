@@ -1,5 +1,5 @@
-from pynball.point import Point
-from pynball.utils import clip
+from pynball_rl.point import Point
+from pynball_rl.utils import clip
 
 
 class Ball:

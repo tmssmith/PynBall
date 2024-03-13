@@ -1,13 +1,13 @@
 # pylint: disable=missing-function-docstring
-
+from pathlib import Path
 import math
 import pytest
-from pynball import PynBall
+from pynball_rl import PynBall
 
 
 @pytest.fixture(name="env")
 def env_fixture():
-    return PynBall("config.toml")
+    return PynBall(Path("pynball_rl/configs/easy_config.toml"))
 
 
 def test_init(env):

@@ -15,8 +15,8 @@ Tests include:
 
 import math
 import pytest
-from pynball import PolygonObstacle, Ball, Point
-from pynball.polygon_obstacle import line_intersect, heading_towards
+from pynball_rl import PolygonObstacle, Ball, Point
+from pynball_rl.polygon_obstacle import line_intersect, heading_towards
 
 
 @pytest.fixture(name="square_obstacle")
@@ -158,11 +158,17 @@ def test_square_collision(square_obstacle):
     ball_1 = Ball(Point(0.1, 0.1), 0.1)  # 'Outside' shape -> False
     ball_2 = Ball(Point(0.5, 0.5), 0.05)  # 'Inside' shape -> False
     ball_3 = Ball(Point(0.1, 0.1), 0.43)
+    ball_3.set_velocity(Point(0.1, 0.1))
     ball_4 = Ball(Point(0.3, 0.4), 0.1)
+    ball_4.set_velocity(Point(0.1, 0.1))
     ball_5 = Ball(Point(0.6, 0.3), 0.1)  # Vertex intersect at 0 -> True
+    ball_5.set_velocity(Point(-0.1, 0.1))
     ball_6 = Ball(Point(0.4, 0.3), 0.1)  # Vertex intersect at 1 -> True
+    ball_6.set_velocity(Point(-0.1, 0.1))
     ball_7 = Ball(Point(0.7, 0.5), 0.1)
+    ball_7.set_velocity(Point(-0.1, 0.1))
     ball_8 = Ball(Point(0.5, 0.65), 0.1)
+    ball_8.set_velocity(Point(-0.1, -0.1))
     assert square_obstacle.collision(ball_1) is False
     assert square_obstacle.collision(ball_2) is False
     assert square_obstacle.collision(ball_3) is True
@@ -214,11 +220,11 @@ def test_square_collision_effect_3(square_obstacle):
 def test_square_collision_effect_4(square_obstacle):
     """Test a double collision."""
     ball = Ball(Point(0.6, 0.3), 0.1)
-    ball.set_velocity(Point(0.2, -0.1))
+    ball.set_velocity(Point(0.2, 0.1))
     square_obstacle.collision(ball)
     # Double collision
     v = square_obstacle.collision_effect(ball)
-    assert v.x == -0.2 and v.y == 0.1
+    assert v.x == 0.2 and v.y == -0.1
 
 
 def test_square_collision_effect_5(square_obstacle):

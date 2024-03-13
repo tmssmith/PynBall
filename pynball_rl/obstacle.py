@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from pynball.ball import Ball
-from pynball.point import Point
+from pynball_rl.ball import Ball
+from pynball_rl.point import Point
 
 
 class Obstacle(ABC):

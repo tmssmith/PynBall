@@ -2,8 +2,8 @@ from pathlib import Path
 import importlib.resources
 
 import pygame
-from pynball.pynball_env import PynBall
-from pynball.viewer import Viewer
+from pynball_rl.pynball_env import PynBall
+from pynball_rl.viewer import Viewer
 
 
 def main() -> None:
@@ -12,7 +12,19 @@ def main() -> None:
     Accelerate the ball using arrow keys. Close window to quit.
     """
 
-    config = importlib.resources.files("pynball.configs") / "easy_config.toml"
+    config_dict = {
+        1: "very_easy",
+        2: "easy",
+        3: "hard",
+    }
+
+    difficulty = input("Enter difficulty between 1 (very easy) and 3 (hard)")
+    if difficulty not in [1, 2, 3]:
+        difficulty = 2
+
+    file = f"{config_dict[int(difficulty)]}_config.toml"
+
+    config = importlib.resources.files("pynball_rl.configs") / file
     env = PynBall(Path(config))
     env.reset()
     pygame.init()

@@ -1,6 +1,6 @@
-from pynball.obstacle import Obstacle
-from pynball.ball import Ball
-from pynball.point import Point
+from pynball_rl.obstacle import Obstacle
+from pynball_rl.ball import Ball
+from pynball_rl.point import Point
 
 
 class Target(Obstacle):

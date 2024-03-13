@@ -2,7 +2,7 @@
 
 import math
 import pytest
-from pynball import Point, Ball
+from pynball_rl import Point, Ball
 
 
 @pytest.fixture(name="ball")

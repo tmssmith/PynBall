@@ -1,9 +1,9 @@
 import math
 from typing import Optional
-from pynball.ball import Ball
-from pynball.obstacle import Obstacle
-from pynball.point import Point
-from pynball.utils import clip_if_close
+from pynball_rl.ball import Ball
+from pynball_rl.obstacle import Obstacle
+from pynball_rl.point import Point
+from pynball_rl.utils import clip_if_close
 
 
 def line_intersect(ball: Ball, edge: list[Point]) -> bool:
