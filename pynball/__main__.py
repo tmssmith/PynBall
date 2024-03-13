@@ -44,3 +44,7 @@ def main() -> None:
 
     pygame.quit()
     print(f"Score: {reward}")
+
+
+if __name__ == "__main__":
+    main()
