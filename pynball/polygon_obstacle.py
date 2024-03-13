@@ -11,9 +11,9 @@ def line_intersect(ball: Ball, edge: list[Point]) -> bool:
 
     Represents the intersection point(s) of an infinite line and the
     circumference of the ball as the roots of a quadratic equation.
-    Root is imaginary if the line and circumference do no intersect.
-    Intersection(s) are on the edge (i.e a finite section of the inifinite line)
-    if either root is between 0 and 1 (inclusive).
+    Root is imaginary if the line and circumference do not intersect.
+    Intersection(s) are on the edge (i.e a finite section of the
+    inifinite line) if either root is between 0 and 1 (inclusive).
 
     See [1] for algorithmic details. Implementation uses the
     alternative quadratic formula [2].
@@ -53,6 +53,34 @@ def line_intersect(ball: Ball, edge: list[Point]) -> bool:
     return 0 <= clip_if_close(t1) <= 1 or 0 <= clip_if_close(t2) <= 1
 
 
+def heading_towards(ball: Ball, edge: list[Point]) -> bool:
+    """Checks whether a ball is heading towards an edge.
+
+    The edge and ball velocity are represented as infinite lines.
+    A scalar `t` representing how far down the velocity vector the
+    intersection happens is found using Cramer's rule [1]. If `t>0` the
+    ball is heading towards the edge.
+
+    [1] https://math.stackexchange.com/questions/406864/intersection-of-two-lines-in-vector-form
+
+    Args:
+        ball (Ball): Ball to test.
+        edge (list[Point]): Edge to test.
+
+    Returns:
+        bool: _description_
+    """
+    v = [ball.get_center(), ball.get_velocity()]
+    e = [edge[0], edge[1].minus(edge[0])]
+    if v[1].is_parallel_to(e[1]):
+        return False
+    t = ((e[0].x - v[0].x) * e[1].y - e[1].x * (e[0].y - v[0].y)) / (
+        v[1].x * e[1].y - e[1].x * v[1].y
+    )
+
+    return t > 0.0
+
+
 class PolygonObstacle(Obstacle):
     """A polygon obstacle.
 
@@ -83,11 +111,13 @@ class PolygonObstacle(Obstacle):
         self.intersect_edges = []
         self.num_collisions = 0
         for edge in self.edges:
-            if line_intersect(ball, edge):
+            if heading_towards(ball, edge) and line_intersect(ball, edge):
                 if not self.intersect_edges:
                     self.intersect_edges.append(edge)
                     self.num_collisions += 1
                 elif not self.any_parallel(edge, self.intersect_edges):
+                    # Only consider edge intersect if no parallel edge
+                    # intersections detected.
                     self.intersect_edges.append(edge)
                     self.num_collisions += 1
 
