@@ -1,0 +1,25 @@
+seed = 12345
+step_duration = 20
+drag = 0.995
+
+[ball]
+    starts = [[0.2, 0.9]] # List of possible starting points.
+    radius = 0.02
+
+[target]
+    location = [0.9, 0.2]
+    radius = 0.04
+    
+# Board boundary
+[[obstacles]]
+    points = [[0.0, 0.0], [0.0, 0.01], [1.0, 0.01], [1.0, 0.0]]
+[[obstacles]]
+    points = [[0.0, 0.0], [0.01, 0.0], [0.01, 1.0], [0.0, 1.0]]
+[[obstacles]]
+    points = [[0.0, 1.0], [0.0, 0.99], [1.0, 0.99], [1.0, 1.0]]
+[[obstacles]]
+    points = [[1.0, 1.0], [0.99, 1.0], [0.99, 0.0], [1.0, 0.0]]
+
+# Obstacles
+[[obstacles]]
+    points = [[0.4, 0.4], [0.6, 0.4], [0.6, 0.6], [0.4, 0.6]]
