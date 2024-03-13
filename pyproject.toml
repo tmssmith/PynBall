@@ -6,7 +6,8 @@ license = "MIT"
 authors = ["Tom Smith <tmssmith@gmail.com>"]
 readme = "README.md"
 repository = "https://github.com/tmssmith/PynBall"
-exclude = ["pynball/tests/*"]
+exclude = ["./tests/*"]
+include = ["./pynball./configs/*"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
