@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pynball"
-version = "0.2.2"
+version = "0.2.3"
 description = "A python implementation of the classic reinforcement learning domain PinBall."
 license = "MIT"
 authors = ["Tom Smith <tmssmith@gmail.com>"]
