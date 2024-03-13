@@ -11,7 +11,6 @@ from pynball.point import Point
 from pynball.ball import Ball
 from pynball.polygon_obstacle import PolygonObstacle
 from pynball.target import Target
-from pynball.utils import clip_if_close
 
 
 class PynBall:
@@ -41,10 +40,9 @@ class PynBall:
 
     def __init__(
         self,
-        config_path: str | None = None,
+        config_path: Path | None = None,
     ) -> None:
 
-        config_path = Path(config_path)
         with open(config_path, "rb") as fb:
             self.config = tomllib.load(fb)
 
@@ -155,13 +153,10 @@ class PynBall:
             RuntimeError: Ball out of bounds error.
         """
         if not (0.0 < self.ball.x < 1.0 and 0.0 < self.ball.y < 1.0):
-            self.ball.x = clip_if_close(self.ball.x)
-            self.ball.y = clip_if_close(self.ball.y)
-        if not (0.0 < self.ball.x < 1.0 and 0.0 < self.ball.y < 1.0):
             raise RuntimeError(
-                "Ball out of bounds\n",
-                f"x: {self.ball.x}\ny: {self.ball.y}\n",
-                f"vel_x: {self.ball.xdot}\nvel_y: {self.ball.ydot}",
+                "Ball out of bounds\n"
+                f"x: {self.ball.x}\ny: {self.ball.y}\n"
+                f"vel_x: {self.ball.xdot}\nvel_y: {self.ball.ydot}"
             )
 
     def render(self) -> plt.Figure:
