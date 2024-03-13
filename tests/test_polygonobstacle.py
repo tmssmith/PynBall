@@ -16,7 +16,7 @@ Tests include:
 import math
 import pytest
 from pynball import PolygonObstacle, Ball, Point
-from pynball.polygon_obstacle import line_intersect
+from pynball.polygon_obstacle import line_intersect, heading_towards
 
 
 @pytest.fixture(name="square_obstacle")
@@ -119,6 +119,41 @@ def test_square_obstacle_intersect(square_obstacle):
     assert line_intersect(ball_6, edge) is True
 
 
+def test_square_obstacle_heading_towards(square_obstacle):
+    ball = Ball(Point(-0.2, 0.1), 0.01)
+
+    ball.set_velocity(Point(0, 0))
+    for edge in square_obstacle.edges:
+        assert heading_towards(ball, edge) is False
+
+    ball.set_velocity(Point(-1, 0))
+    for edge in square_obstacle.edges:
+        assert heading_towards(ball, edge) is False
+
+    ball.set_velocity(Point(1, 1))
+    for edge in square_obstacle.edges:
+        print(f"({edge[0]}), ({edge[1]})")
+        assert heading_towards(ball, edge) is True
+
+    ball.set_velocity(Point(1, 0))
+    for edge in square_obstacle.edges:
+        if edge[1].minus(edge[0]).is_parallel_to(ball.get_velocity()):
+            assert heading_towards(ball, edge) is False
+        else:
+            assert heading_towards(ball, edge) is True
+
+    ball.set_velocity(Point(0, 1))
+    for edge in square_obstacle.edges:
+        if edge[1].minus(edge[0]).is_parallel_to(ball.get_velocity()):
+            assert heading_towards(ball, edge) is False
+        else:
+            assert heading_towards(ball, edge) is True
+
+    ball.set_velocity(Point(0, -1))
+    for edge in square_obstacle.edges:
+        assert heading_towards(ball, edge) is False
+
+
 def test_square_collision(square_obstacle):
     ball_1 = Ball(Point(0.1, 0.1), 0.1)  # 'Outside' shape -> False
     ball_2 = Ball(Point(0.5, 0.5), 0.05)  # 'Inside' shape -> False
@@ -145,6 +180,8 @@ def test_any_parallel(square_obstacle):
     assert square_obstacle.any_parallel(e1, [e2]) is True
     assert square_obstacle.any_parallel(e1, [e3]) is False
     assert square_obstacle.any_parallel(e1, [e2, e3]) is True
+    e = square_obstacle.edges[0]
+    assert square_obstacle.any_parallel(e, square_obstacle.edges[1:])
 
 
 def test_square_collision_effect_1(square_obstacle):

@@ -105,3 +105,11 @@ def test_parallel():
     assert p2.is_parallel_to(p1) is True
     assert p2.is_parallel_to(p3) is True
     assert p1.is_parallel_to(p4) is False
+
+
+def test_angle_between(first_point, second_point, third_point):
+    assert first_point.angle_between(second_point) == math.pi / 4
+    assert second_point.angle_between(third_point) == 3 * math.pi / 4
+    assert first_point.angle_between(third_point) == math.pi
+    assert third_point.angle_between(first_point) == math.pi
+    assert first_point.angle_between(first_point) == 0.0
