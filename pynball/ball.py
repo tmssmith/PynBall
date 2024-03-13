@@ -87,5 +87,13 @@ class Ball:
         """
         return Point(self.x, self.y)
 
+    def get_velocity(self) -> Point:
+        """Get the velocity vector of the ball.
+
+        Returns:
+            Point: A point corresponding to the velocity of the ball.
+        """
+        return Point(self.xdot, self.ydot)
+
     def __str__(self):
-        return f"{str(self.get_center())}, {self.xdot}, {self.ydot}"
+        return f"{str(self.get_center())}, {self.get_velocity}"
