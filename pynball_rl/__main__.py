@@ -18,11 +18,12 @@ def main() -> None:
         3: "hard",
     }
 
-    difficulty = input("Enter difficulty between 1 (very easy) and 3 (hard)")
+    difficulty = int(input("Enter difficulty between 1 (very easy) and 3 (hard)"))
     if difficulty not in [1, 2, 3]:
         difficulty = 2
 
     file = f"{config_dict[int(difficulty)]}_config.toml"
+    # file = "four_rooms_config.toml"
 
     config = importlib.resources.files("pynball_rl.configs") / file
     env = PynBall(Path(config))
@@ -36,19 +37,21 @@ def main() -> None:
         pygame.K_DOWN: 1,
     }
     noop = 4
-    running = True
     reward = 0
-
+    running = True
+    terminal = False
     while running:
         pygame.time.wait(50)
         user_action = noop
+        r = 0
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type in (pygame.KEYUP, pygame.KEYDOWN):
+            if event.type == pygame.KEYDOWN:
                 user_action = actions.get(event.key, noop)
-        _, r, t, _ = env.step(user_action)
-        if t:
+        if user_action in env.action_space:
+            _, r, terminal, _ = env.step(user_action)
+        if terminal:
             running = False
         reward += r
         viewer.blit(env.ball)

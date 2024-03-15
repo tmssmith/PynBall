@@ -46,9 +46,12 @@ class PynBall:
         with open(config_path, "rb") as fb:
             self.config = tomllib.load(fb)
 
-        random.seed(self.config["seed"])
-        self.step_duration: int = self.config["step_duration"]
-        self.drag: float = self.config["drag"]
+        random.seed(self.config.get("seed", 42))
+        self.step_duration: int = self.config.get("step_duration", 20)
+        self.drag: float = self.config.get("drag", 0.995)
+        self.stddev: float = self.config.get("stddev", 0.0)
+        self.allow_noop: bool = self.config.get("allow_noop", True)
+        self.action_space = range(5) if self.allow_noop else range(4)
         self.obstacles = [
             PolygonObstacle([Point(*point) for point in obstacle["points"]])
             for obstacle in self.config["obstacles"]
@@ -111,10 +114,14 @@ class PynBall:
             tuple: (state, reward, terminal, info)
         """
         assert self.reset_flag is True, "Environment requires resetting."
-        x_impulse, y_impulse = self.ACTION_DICT[action]
-        reward = self.NOP_PENALTY if action == 4 else self.THRUST_PENALTY
+        if action == 4:
+            impulse = (0.0, 0.0)
+            reward = self.NOP_PENALTY
+        else:
+            impulse = [random.gauss(i, self.stddev) for i in self.ACTION_DICT[action]]
+            reward = self.THRUST_PENALTY
         terminal = False
-        self.ball.add_impulse(x_impulse, y_impulse)
+        self.ball.add_impulse(*impulse)
         for i in range(self.step_duration):
             num_collisions = 0
             collidor: PolygonObstacle = None

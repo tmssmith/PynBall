@@ -1,6 +1,8 @@
 seed = 12345
 step_duration = 20
 drag = 0.995
+stddev = 0.0
+allow_noop = true
 
 [ball]
     starts = [[0.055, 0.95]] # List of possible starting points.
