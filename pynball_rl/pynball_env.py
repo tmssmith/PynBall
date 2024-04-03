@@ -40,9 +40,11 @@ class PynBall:
 
     def __init__(
         self,
-        config_path: Path | None = None,
+        config_path: Path,
+        exploration: bool = False,
     ) -> None:
 
+        self.exploration = exploration
         with open(config_path, "rb") as fb:
             self.config = tomllib.load(fb)
 
@@ -96,7 +98,7 @@ class PynBall:
         Returns:
             bool: True if the state is terminal, False otherwise.
         """
-        return self.target.collision(self.ball)
+        return self.target.collision(self.ball) and not self.exploration
 
     def step(self, action: int) -> tuple:
         """Advances the environment one timestep.
