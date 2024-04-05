@@ -1,7 +1,8 @@
 seed = 12345
 step_duration = 20
 drag = 0.0
-stddev = 0.2
+stddev_x = 0.2
+stddev_y = 0.2
 allow_noop = false
 
 [ball]
