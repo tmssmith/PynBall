@@ -1,15 +1,16 @@
 seed = 12345
 step_duration = 20
-drag = 0.0
-stddev = 0.2
-allow_noop = false
+drag = 0.995
+stddev_x = 0.2
+stddev_y = 0.0
+allow_noop = true
 
 [ball]
-    starts = [[0.2, 0.2], [0.2, 0.9]] # List of possible starting points.
+    starts = [[0.2, 0.2], [0.9, 0.2]] # List of possible starting points.
     radius = 0.02
 
 [target]
-    location = [0.2, 0.9]
+    location = [0.2, 0.2]
     radius = 0.04
     
 # Board boundary
