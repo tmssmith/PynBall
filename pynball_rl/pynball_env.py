@@ -37,6 +37,7 @@ class PynBall:
 
     THRUST_PENALTY = -5.0
     NOP_PENALTY = -1.0
+    GOAL_REWARD = 10_000
 
     def __init__(
         self,
@@ -51,7 +52,8 @@ class PynBall:
         random.seed(self.config.get("seed", 42))
         self.step_duration: int = self.config.get("step_duration", 20)
         self.drag: float = self.config.get("drag", 0.995)
-        self.stddev: float = self.config.get("stddev", 0.0)
+        self.stddev_x: float = self.config.get("stddev_x", 0.0)
+        self.stddev_y: float = self.config.get("stddev_y", 0.0)
         self.allow_noop: bool = self.config.get("allow_noop", True)
         self.action_space = range(5) if self.allow_noop else range(4)
         self.obstacles = [
@@ -120,7 +122,11 @@ class PynBall:
             impulse = (0.0, 0.0)
             reward = self.NOP_PENALTY
         else:
-            impulse = [random.gauss(i, self.stddev) for i in self.ACTION_DICT[action]]
+            x_imp, y_imp = self.ACTION_DICT[action]
+            impulse = (
+                random.gauss(x_imp, self.stddev_x),
+                random.gauss(y_imp, self.stddev_y),
+            )
             reward = self.THRUST_PENALTY
         terminal = False
         self.ball.add_impulse(*impulse)
@@ -148,6 +154,7 @@ class PynBall:
             if self.terminal():
                 terminal = True
                 self.reset_flag = False
+                reward += self.GOAL_REWARD
                 break
 
         self.ball.add_drag(self.drag)
