@@ -68,17 +68,15 @@ def heading_towards(ball: Ball, edge: list[Point]) -> bool:
         edge (list[Point]): Edge to test.
 
     Returns:
-        bool: _description_
+        bool: True if ball is headng towards edge, False otherwise.
     """
     v = [ball.get_center(), ball.get_velocity()]
-    if v[1].size() == 0.0:
-        return True
+    if math.isclose(v[1].size(), 0.0):
+        return False
     e = [edge[0], edge[1].minus(edge[0])]
     if v[1].is_parallel_to(e[1]):
         return False
-    t = ((e[0].x - v[0].x) * e[1].y - e[1].x * (e[0].y - v[0].y)) / (
-        v[1].x * e[1].y - e[1].x * v[1].y
-    )
+    t = ((e[0].x - v[0].x) * e[1].y - e[1].x * (e[0].y - v[0].y)) / (v[1].x * e[1].y - e[1].x * v[1].y)
 
     return t > 0.0
 
@@ -99,9 +97,7 @@ class PolygonObstacle(Obstacle):
 
     def __init__(self, points: list[Point]) -> None:
         self.points = points
-        self.edges = [
-            [self.points[i], self.points[i - 1]] for i in range(len(self.points))
-        ]
+        self.edges = [[self.points[i], self.points[i - 1]] for i in range(len(self.points))]
         self.bounds = self.get_bounds()
         self.num_collisions: int = 0
         self.intersect_edges: list[list[Point]] = []
@@ -154,9 +150,7 @@ class PolygonObstacle(Obstacle):
         Returns:
             Point: The new velocity.
         """
-        assert (
-            self.num_collisions != 0.0
-        ), "No collisions detected, did you call .collision() first?"
+        assert self.num_collisions != 0.0, "No collisions detected, did you call .collision() first?"
 
         if self.num_collisions > 1:
             # If there are multiple collisions, reverse velocity.
@@ -192,9 +186,9 @@ class PolygonObstacle(Obstacle):
 
         for edge in self.edges:
             v1, v2 = edge
-            if (v1.y > point.y) != (v2.y > point.y) and point.x < (v2.x - v1.x) * (
-                point.y - v1.y
-            ) / (v2.y - v1.y) + v1.x:
+            if (v1.y > point.y) != (v2.y > point.y) and point.x < (v2.x - v1.x) * (point.y - v1.y) / (
+                v2.y - v1.y
+            ) + v1.x:
                 inside = not inside
 
         return inside
@@ -231,8 +225,5 @@ class PolygonObstacle(Obstacle):
         """
         min_x, min_y, max_x, max_y = self.bounds
         return (
-            point.x + radius < min_x
-            or point.y + radius < min_y
-            or point.x - radius > max_x
-            or point.y - radius > max_y
+            point.x + radius < min_x or point.y + radius < min_y or point.x - radius > max_x or point.y - radius > max_y
         )
